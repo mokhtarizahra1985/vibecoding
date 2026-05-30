@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مسیر یک درخواست وب</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #0f1623;
+      --bg-card: rgba(20, 32, 52, 0.65);
+      --border-glass: rgba(0, 212, 255, 0.15);
+      --cyan: #00d4ff;
+      --amber: #ffb347;
+      --text: #e8eef7;
+      --text-muted: #94a3b8;
+      --green: #4ade80;
+      --blue: #60a5fa;
+      --orange: #fb923c;
+      --red: #f87171;
+      --stage-url: #00d4ff;
+      --stage-dns: #a78bfa;
+      --stage-tcp: #34d399;
+      --stage-tls: #fbbf24;
+      --stage-http: #ffb347;
+      --stage-response: #f472b6;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-behavior: smooth;
+      direction: rtl;
+    }
+
+    body {
+      font-family: 'Vazirmatn', sans-serif;
+      background-color: var(--bg-deep);
+      color: var(--text);
+      line-height: 1.7;
+      min-height: 100vh;
+      background-image:
+        radial-gradient(circle at 1px 1px, rgba(0, 212, 255, 0.08) 1px, transparent 0);
+      background-size: 28px 28px;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(15, 22, 35, 0.4) 0%, var(--bg-deep) 100%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 4rem;
+    }
+
+    section {
+      opacity: 0;
+      transform: translateY(24px);
+      animation: fadeSlideUp 0.7s ease forwards;
+    }
+
+    section:nth-of-type(1) { animation-delay: 0.1s; }
+    section:nth-of-type(2) { animation-delay: 0.2s; }
+    section:nth-of-type(3) { animation-delay: 0.3s; }
+    section:nth-of-type(4) { animation-delay: 0.4s; }
+
+    @keyframes fadeSlideUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 4rem 1rem 3rem;
+    }
+
+    .hero h1 {
+      font-size: clamp(1.75rem, 5vw, 2.75rem);
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--cyan), var(--amber));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 40px rgba(0, 212, 255, 0.25);
+      margin-bottom: 1rem;
+    }
+
+    .hero .subtitle-wrap {
+      display: inline-block;
+      font-size: clamp(1rem, 2.5vw, 1.25rem);
+      color: var(--text-muted);
+      font-weight: 400;
+      border-right: 2px solid var(--cyan);
+      padding-right: 0.35rem;
+      animation: blink-cursor 1s step-end infinite;
+    }
+
+    @keyframes blink-cursor {
+      50% { border-color: transparent; }
+    }
+
+    h2 {
+      font-size: clamp(1.35rem, 3vw, 1.75rem);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: var(--text);
+      position: relative;
+      padding-bottom: 0.5rem;
+    }
+
+    h2::after {
+      content: '';
+      display: block;
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--cyan), transparent);
+      margin-top: 0.5rem;
+      border-radius: 2px;
+    }
+
+    /* Flow diagram */
+    .flow {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      margin: 2rem 0 3rem;
+    }
+
+    .flow-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .flow-arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 48px;
+      width: 100%;
+      position: relative;
+      color: var(--cyan);
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .flow-arrow::before {
+      content: '';
+      position: absolute;
+      width: 80%;
+      max-width: 120px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.4), transparent);
+    }
+
+    .flow-arrow .pulse-dot {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 12px var(--cyan);
+      animation: travel-h 2s ease-in-out infinite;
+    }
+
+    @keyframes travel-h {
+      0%, 100% { transform: translateX(-40px); opacity: 0.3; }
+      50% { transform: translateX(40px); opacity: 1; }
+    }
+
+    @keyframes travel-v {
+      0%, 100% { transform: translateY(-20px); opacity: 0.3; }
+      50% { transform: translateY(20px); opacity: 1; }
+    }
+
+    .stage-card {
+      width: 100%;
+      max-width: 220px;
+      font-family: inherit;
+      color: inherit;
+      appearance: none;
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border-glass);
+      border-radius: 14px;
+      padding: 1.25rem 1rem;
+      cursor: pointer;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      text-align: center;
+    }
+
+    .stage-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35), 0 0 24px rgba(0, 212, 255, 0.12);
+    }
+
+    .stage-card .icon { font-size: 2rem; margin-bottom: 0.5rem; display: block; }
+    .stage-card .name { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.35rem; }
+    .stage-card .short-desc { font-size: 0.85rem; color: var(--text-muted); }
+
+    .stage-card[data-stage="url"].active { border-color: var(--stage-url); box-shadow: 0 0 20px rgba(0, 212, 255, 0.25); }
+    .stage-card[data-stage="dns"].active { border-color: var(--stage-dns); box-shadow: 0 0 20px rgba(167, 139, 250, 0.25); }
+    .stage-card[data-stage="tcp"].active { border-color: var(--stage-tcp); box-shadow: 0 0 20px rgba(52, 211, 153, 0.25); }
+    .stage-card[data-stage="tls"].active { border-color: var(--stage-tls); box-shadow: 0 0 20px rgba(251, 191, 36, 0.25); }
+    .stage-card[data-stage="http"].active { border-color: var(--stage-http); box-shadow: 0 0 20px rgba(255, 179, 71, 0.25); }
+    .stage-card[data-stage="response"].active { border-color: var(--stage-response); box-shadow: 0 0 20px rgba(244, 114, 182, 0.25); }
+
+    .stage-detail {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.45s ease, margin 0.35s ease, opacity 0.35s ease;
+      opacity: 0;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      text-align: right;
+      width: 100%;
+      max-width: 220px;
+      padding: 0 0.25rem;
+      margin-top: 0;
+    }
+
+    .flow-item.has-open .stage-detail {
+      max-height: 220px;
+      opacity: 1;
+      margin-top: 0.75rem;
+    }
+
+    .flow-row {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+
+    @media (min-width: 768px) {
+      .flow {
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: flex-start;
+        justify-content: center;
+        gap: 0.25rem;
+      }
+
+      .flow-item {
+        flex: 1 1 0;
+        min-width: 120px;
+        max-width: 170px;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .flow-row {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .flow-arrow {
+        width: auto;
+        min-width: 28px;
+        flex: 0 0 auto;
+        height: auto;
+        align-self: flex-start;
+        margin-top: 3.5rem;
+        padding: 0 2px;
+        transform: none;
+      }
+
+      .flow-arrow::before {
+        width: 28px;
+        max-width: 28px;
+      }
+
+      .flow-arrow .pulse-dot {
+        animation: travel-h 2s ease-in-out infinite;
+      }
+
+      .stage-detail {
+        max-width: 100%;
+      }
+
+      .flow-item { position: relative; }
+    }
+
+    @media (min-width: 1024px) {
+      .stage-card { max-width: 165px; }
+      .stage-card .short-desc { font-size: 0.8rem; }
+    }
+
+    @media (max-width: 767px) {
+      .flow-arrow {
+        transform: rotate(90deg);
+        height: 56px;
+      }
+
+      .flow-arrow .pulse-dot {
+        animation: travel-v 2s ease-in-out infinite;
+      }
+
+      .stage-card { max-width: 100%; }
+      .stage-detail { max-width: 100%; }
+    }
+
+    /* Status codes */
+    .status-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    @media (min-width: 768px) {
+      .status-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (min-width: 1024px) {
+      .status-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    .status-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border-glass);
+      border-radius: 12px;
+      padding: 1.25rem;
+      transition: box-shadow 0.3s ease, transform 0.2s ease;
+    }
+
+    .status-card:hover { transform: translateY(-2px); }
+
+    .status-card.cat-2xx:hover { box-shadow: 0 0 24px rgba(74, 222, 128, 0.2); }
+    .status-card.cat-3xx:hover { box-shadow: 0 0 24px rgba(96, 165, 250, 0.2); }
+    .status-card.cat-4xx:hover { box-shadow: 0 0 24px rgba(251, 146, 60, 0.2); }
+    .status-card.cat-5xx:hover { box-shadow: 0 0 24px rgba(248, 113, 113, 0.2); }
+
+    .status-code {
+      font-size: 1.75rem;
+      font-weight: 900;
+      margin-bottom: 0.25rem;
+    }
+
+    .cat-2xx .status-code { color: var(--green); }
+    .cat-3xx .status-code { color: var(--blue); }
+    .cat-4xx .status-code { color: var(--orange); }
+    .cat-5xx .status-code { color: var(--red); }
+
+    .status-name { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.35rem; }
+    .status-desc { font-size: 0.85rem; color: var(--text-muted); }
+
+    /* Troubleshooting */
+    .trouble-section {
+      margin-top: 3rem;
+    }
+
+    .trouble-wrap {
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 179, 71, 0.25);
+      border-radius: 14px;
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .trouble-wrap::before {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: linear-gradient(180deg, var(--amber), var(--red));
+      animation: pulse-border 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-border {
+      0%, 100% { opacity: 0.6; box-shadow: 0 0 8px var(--amber); }
+      50% { opacity: 1; box-shadow: 0 0 16px var(--red); }
+    }
+
+    .error-block {
+      padding: 1rem 1rem 1rem 0;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+      margin-bottom: 1rem;
+    }
+
+    .error-block:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+
+    .error-name {
+      font-weight: 700;
+      color: var(--orange);
+      margin-bottom: 0.35rem;
+    }
+
+    .error-block:nth-child(1) .error-name { color: var(--red); }
+
+    .debug-tip {
+      margin-top: 0.5rem;
+      font-family: ui-monospace, 'Cascadia Code', monospace;
+      font-size: 0.85rem;
+      color: var(--cyan);
+      background: rgba(0, 212, 255, 0.06);
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+      border-right: 3px solid var(--cyan);
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      border: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="hero" role="banner">
+      <h1>مسیر یک درخواست وب</h1>
+      <p class="subtitle-wrap" aria-label="زیرعنوان">از تایپ آدرس تا نمایش صفحه — چه اتفاقی می‌افتد؟</p>
+    </header>
+
+    <section aria-labelledby="flow-heading">
+      <h2 id="flow-heading">مسیر درخواست</h2>
+      <div class="flow" role="list">
+        <div class="flow-item" role="listitem">
+          <div class="flow-row">
+            <button type="button" class="stage-card" data-stage="url" aria-expanded="false" aria-controls="detail-url" id="btn-url">
+              <span class="icon" aria-hidden="true">🔗</span>
+              <span class="name">URL</span>
+              <span class="short-desc">آدرسی که کاربر در مرورگر وارد می‌کند؛ مثل نقشه‌ای که می‌گوید «کجا برو».</span>
+            </button>
+          </div>
+          <div class="stage-detail" id="detail-url" aria-hidden="true">
+            مرورگر آدرس را تجزیه می‌کند: پروتکل (http/https)، نام دامنه و مسیر — همان «کجا برو»ی درخواست تو.
+          </div>
+        </div>
+        <div class="flow-arrow" aria-hidden="true"><span class="pulse-dot"></span>→</div>
+
+        <div class="flow-item" role="listitem">
+          <div class="flow-row">
+            <button type="button" class="stage-card" data-stage="dns" aria-expanded="false" aria-controls="detail-dns" id="btn-dns">
+              <span class="icon" aria-hidden="true">🌐</span>
+              <span class="name">DNS</span>
+              <span class="short-desc">نام دامنه به آدرس IP تبدیل می‌شود؛ مثل دفترچه تلفن اینترنت.</span>
+            </button>
+          </div>
+          <div class="stage-detail" id="detail-dns" aria-hidden="true">
+            مرورگر از سرور DNS می‌پرسد IP مربوط به نام دامنه چیست. پاسخ اغلب در کَش ذخیره می‌شود تا بار بعد سریع‌تر باشد.
+          </div>
+        </div>
+        <div class="flow-arrow" aria-hidden="true"><span class="pulse-dot"></span>→</div>
+
+        <div class="flow-item" role="listitem">
+          <div class="flow-row">
+            <button type="button" class="stage-card" data-stage="tcp" aria-expanded="false" aria-controls="detail-tcp" id="btn-tcp">
+              <span class="icon" aria-hidden="true">🤝</span>
+              <span class="name">TCP</span>
+              <span class="short-desc">یک اتصال پایدار بین مرورگر و سرور برقرار می‌شود (three-way handshake).</span>
+            </button>
+          </div>
+          <div class="stage-detail" id="detail-tcp" aria-hidden="true">
+            با Three-Way Handshake (SYN → SYN-ACK → ACK) کانال قابل‌اعتماد TCP بین مرورگر و سرور ساخته می‌شود.
+          </div>
+        </div>
+        <div class="flow-arrow" aria-hidden="true"><span class="pulse-dot"></span>→</div>
+
+        <div class="flow-item" role="listitem">
+          <div class="flow-row">
+            <button type="button" class="stage-card" data-stage="tls" aria-expanded="false" aria-controls="detail-tls" id="btn-tls">
+              <span class="icon" aria-hidden="true">🔒</span>
+              <span class="name">TLS</span>
+              <span class="short-desc">داده‌ها رمزنگاری می‌شوند تا ارتباط امن باشد (HTTPS).</span>
+            </button>
+          </div>
+          <div class="stage-detail" id="detail-tls" aria-hidden="true">
+            در HTTPS، گواهی سرور بررسی می‌شود و کلیدهای رمزنگاری مبادله می‌شود تا کسی میان‌راه نتواند محتوا را بخواند.
+          </div>
+        </div>
+        <div class="flow-arrow" aria-hidden="true"><span class="pulse-dot"></span>→</div>
+
+        <div class="flow-item" role="listitem">
+          <div class="flow-row">
+            <button type="button" class="stage-card" data-stage="http" aria-expanded="false" aria-controls="detail-http" id="btn-http">
+              <span class="icon" aria-hidden="true">📤</span>
+              <span class="name">HTTP</span>
+              <span class="short-desc">مرورگر درخواست خود را به سرور ارسال می‌کند.</span>
+            </button>
+          </div>
+          <div class="stage-detail" id="detail-http" aria-hidden="true">
+            درخواست HTTP شامل متد (GET/POST)، هدرها (مثل User-Agent) و در صورت نیاز بدنه پیام است — همه روی همان اتصال امن ارسال می‌شود.
+          </div>
+        </div>
+        <div class="flow-arrow" aria-hidden="true"><span class="pulse-dot"></span>→</div>
+
+        <div class="flow-item" role="listitem">
+          <div class="flow-row">
+            <button type="button" class="stage-card" data-stage="response" aria-expanded="false" aria-controls="detail-response" id="btn-response">
+              <span class="icon" aria-hidden="true">📥</span>
+              <span class="name">Response</span>
+              <span class="short-desc">سرور پاسخ می‌دهد؛ معمولاً HTML، JSON یا یک فایل.</span>
+            </button>
+          </div>
+          <div class="stage-detail" id="detail-response" aria-hidden="true">
+            سرور کد وضعیت (مثل 200) و بدنه پاسخ را برمی‌گرداند. مرورگر HTML را parse می‌کند، JSON را پردازش می‌کند یا فایل را ذخیره و نمایش می‌دهد.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="status-heading">
+      <h2 id="status-heading">کدهای وضعیت HTTP</h2>
+      <div class="status-grid">
+        <article class="status-card cat-2xx"><div class="status-code">200</div><div class="status-name">OK</div><p class="status-desc">درخواست موفق بود</p></article>
+        <article class="status-card cat-2xx"><div class="status-code">201</div><div class="status-name">Created</div><p class="status-desc">منبع جدید ساخته شد</p></article>
+        <article class="status-card cat-2xx"><div class="status-code">204</div><div class="status-name">No Content</div><p class="status-desc">موفق، ولی محتوایی برای نمایش نیست</p></article>
+        <article class="status-card cat-3xx"><div class="status-code">301</div><div class="status-name">Moved Permanently</div><p class="status-desc">آدرس به‌طور دائم تغییر کرده</p></article>
+        <article class="status-card cat-3xx"><div class="status-code">302</div><div class="status-name">Found</div><p class="status-desc">تغییر موقت آدرس</p></article>
+        <article class="status-card cat-3xx"><div class="status-code">304</div><div class="status-name">Not Modified</div><p class="status-desc">محتوا تغییر نکرده، از کَش بخوان</p></article>
+        <article class="status-card cat-4xx"><div class="status-code">400</div><div class="status-name">Bad Request</div><p class="status-desc">درخواست معتبر نیست</p></article>
+        <article class="status-card cat-4xx"><div class="status-code">401</div><div class="status-name">Unauthorized</div><p class="status-desc">باید وارد شوی</p></article>
+        <article class="status-card cat-4xx"><div class="status-code">403</div><div class="status-name">Forbidden</div><p class="status-desc">دسترسی ممنوع</p></article>
+        <article class="status-card cat-4xx"><div class="status-code">404</div><div class="status-name">Not Found</div><p class="status-desc">صفحه پیدا نشد</p></article>
+        <article class="status-card cat-4xx"><div class="status-code">405</div><div class="status-name">Method Not Allowed</div><p class="status-desc">این متد HTTP مجاز نیست</p></article>
+        <article class="status-card cat-4xx"><div class="status-code">429</div><div class="status-name">Too Many Requests</div><p class="status-desc">درخواست‌های زیاد، کمی صبر کن</p></article>
+        <article class="status-card cat-5xx"><div class="status-code">500</div><div class="status-name">Internal Server Error</div><p class="status-desc">خطای داخلی سرور</p></article>
+        <article class="status-card cat-5xx"><div class="status-code">502</div><div class="status-name">Bad Gateway</div><p class="status-desc">سرور واسط پاسخ نگرفت</p></article>
+        <article class="status-card cat-5xx"><div class="status-code">503</div><div class="status-name">Service Unavailable</div><p class="status-desc">سرور موقتاً در دسترس نیست</p></article>
+        <article class="status-card cat-5xx"><div class="status-code">504</div><div class="status-name">Gateway Timeout</div><p class="status-desc">پاسخ سرور خیلی دیر رسید</p></article>
+      </div>
+    </section>
+
+    <section class="trouble-section" aria-labelledby="trouble-heading">
+      <h2 id="trouble-heading">وقتی کار نمی‌کند</h2>
+      <div class="trouble-wrap">
+        <div class="error-block">
+          <h3 class="error-name">DNS Error</h3>
+          <p>دامنه پیدا نشد.</p>
+          <p class="debug-tip">🔧 راهنمای دیباگ: آدرس URL را بررسی کن و مطمئن شو اینترنت وصل است.</p>
+        </div>
+        <div class="error-block">
+          <h3 class="error-name">Timeout</h3>
+          <p>سرور در زمان مناسب پاسخ نداد.</p>
+          <p class="debug-tip">🔧 راهنمای دیباگ: اتصال شبکه را چک کن یا چند لحظه بعد دوباره تلاش کن.</p>
+        </div>
+        <div class="error-block">
+          <h3 class="error-name">404 Not Found</h3>
+          <p>فایل یا صفحه پیدا نشد.</p>
+          <p class="debug-tip">🔧 راهنمای دیباگ: مسیر فایل (href، src یا URL) را بررسی کن و مطمئن شو فایل وجود دارد.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    (function () {
+      var cards = document.querySelectorAll('.stage-card');
+      cards.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var expanded = btn.getAttribute('aria-expanded') === 'true';
+          var detailId = btn.getAttribute('aria-controls');
+          var detail = document.getElementById(detailId);
+          var item = btn.closest('.flow-item');
+
+          cards.forEach(function (other) {
+            if (other !== btn) {
+              other.setAttribute('aria-expanded', 'false');
+              other.classList.remove('active');
+              var od = document.getElementById(other.getAttribute('aria-controls'));
+              if (od) od.setAttribute('aria-hidden', 'true');
+              var oi = other.closest('.flow-item');
+              if (oi) oi.classList.remove('has-open');
+            }
+          });
+
+          if (expanded) {
+            btn.setAttribute('aria-expanded', 'false');
+            btn.classList.remove('active');
+            if (detail) detail.setAttribute('aria-hidden', 'true');
+            if (item) item.classList.remove('has-open');
+          } else {
+            btn.setAttribute('aria-expanded', 'true');
+            btn.classList.add('active');
+            if (detail) detail.setAttribute('aria-hidden', 'false');
+            if (item) item.classList.add('has-open');
+          }
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
