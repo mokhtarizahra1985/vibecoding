@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>پروفایل GitHub — octocat</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --border: #30363d;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --accent: #58a6ff;
+      --accent-hover: #79b8ff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Segoe UI", Tahoma, system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem;
+    }
+
+    h1.page-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1.5rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 3px solid var(--border);
+      margin-bottom: 1rem;
+    }
+
+    .login {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .name {
+      font-size: 1.125rem;
+      color: var(--text);
+      margin-top: 0.25rem;
+    }
+
+    .company {
+      color: var(--muted);
+      margin-top: 0.5rem;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .stat {
+      padding: 1rem;
+      text-align: center;
+      border-inline-start: 1px solid var(--border);
+    }
+
+    .stat:first-child {
+      border-inline-start: none;
+    }
+
+    .stat-value {
+      font-size: 1.25rem;
+      font-weight: 700;
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .details {
+      padding: 1.25rem 1.5rem 1.5rem;
+    }
+
+    .details dl {
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .details dt {
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .details dd {
+      font-size: 0.95rem;
+      margin-inline-start: 0;
+    }
+
+    .details a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .details a:hover {
+      color: var(--accent-hover);
+      text-decoration: underline;
+    }
+
+    .actions {
+      padding: 0 1.5rem 1.5rem;
+    }
+
+    .btn {
+      display: inline-block;
+      width: 100%;
+      text-align: center;
+      padding: 0.65rem 1rem;
+      background: #238636;
+      color: #fff;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      border: 1px solid rgba(240, 246, 252, 0.1);
+    }
+
+    .btn:hover {
+      background: #2ea043;
+    }
+
+    .loading,
+    .error {
+      text-align: center;
+      padding: 3rem 1.5rem;
+      color: var(--muted);
+    }
+
+    .error {
+      color: #f85149;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (min-width: 480px) {
+      .header {
+        flex-direction: row;
+        text-align: start;
+        align-items: flex-start;
+        gap: 1.25rem;
+      }
+
+      .avatar {
+        margin-bottom: 0;
+        flex-shrink: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="page-title">پروفایل کاربر GitHub</h1>
+
+    <div id="loading" class="card loading">در حال بارگذاری…</div>
+    <div id="error" class="card error hidden"></div>
+
+    <article id="profile" class="card hidden" aria-live="polite">
+      <header class="header">
+        <img id="avatar" class="avatar" src="" alt="" width="120" height="120" />
+        <div>
+          <p id="login" class="login"></p>
+          <p id="displayName" class="name hidden"></p>
+          <p id="company" class="company hidden"></p>
+        </div>
+      </header>
+
+      <div class="stats">
+        <div class="stat">
+          <span id="followers" class="stat-value">—</span>
+          <span class="stat-label">دنبال‌کننده</span>
+        </div>
+        <div class="stat">
+          <span id="following" class="stat-value">—</span>
+          <span class="stat-label">دنبال‌شونده</span>
+        </div>
+        <div class="stat">
+          <span id="publicRepos" class="stat-value">—</span>
+          <span class="stat-label">مخزن عمومی</span>
+        </div>
+      </div>
+
+      <div class="details">
+        <dl>
+          <div id="rowBio" class="hidden">
+            <dt>بیو</dt>
+            <dd id="bio"></dd>
+          </div>
+          <div id="rowLocation" class="hidden">
+            <dt>موقعیت</dt>
+            <dd id="location"></dd>
+          </div>
+          <div id="rowBlog" class="hidden">
+            <dt>وب‌سایت</dt>
+            <dd id="blog"></dd>
+          </div>
+          <div id="rowEmail" class="hidden">
+            <dt>ایمیل</dt>
+            <dd id="email"></dd>
+          </div>
+          <div>
+            <dt>نوع حساب</dt>
+            <dd id="accountType"></dd>
+          </div>
+          <div>
+            <dt>تاریخ عضویت</dt>
+            <dd id="createdAt"></dd>
+          </div>
+          <div>
+            <dt>آخرین به‌روزرسانی</dt>
+            <dd id="updatedAt"></dd>
+          </div>
+          <div>
+            <dt>گists عمومی</dt>
+            <dd id="publicGists"></dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="actions">
+        <a id="githubLink" class="btn" href="#" target="_blank" rel="noopener noreferrer">
+          مشاهده در GitHub
+        </a>
+      </div>
+    </article>
+  </div>
+
+  <script>
+    const API_URL = "https://api.github.com/users/mokhtarizahra1985";
+
+    const $ = (id) => document.getElementById(id);
+
+    function formatNumber(n) {
+      return new Intl.NumberFormat("fa-IR").format(n);
+    }
+
+    function formatDate(iso) {
+      return new Intl.DateTimeFormat("fa-IR", {
+        dateStyle: "long",
+        timeStyle: "short",
+      }).format(new Date(iso));
+    }
+
+    function setOptionalRow(rowId, valueId, value, asLink) {
+      const row = $(rowId);
+      const el = $(valueId);
+      if (value == null || value === "") {
+        row.classList.add("hidden");
+        return;
+      }
+      row.classList.remove("hidden");
+      if (asLink) {
+        el.innerHTML = "";
+        const a = document.createElement("a");
+        a.href = value.startsWith("http") ? value : "https://" + value;
+        a.textContent = value;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        el.appendChild(a);
+      } else {
+        el.textContent = value;
+      }
+    }
+
+    function showProfile(user) {
+      $("loading").classList.add("hidden");
+      $("profile").classList.remove("hidden");
+
+      $("avatar").src = user.avatar_url;
+      $("avatar").alt = "آواتار " + user.login;
+      $("login").textContent = "@" + user.login;
+
+      if (user.name) {
+        $("displayName").textContent = user.name;
+        $("displayName").classList.remove("hidden");
+      }
+
+      if (user.company) {
+        $("company").textContent = user.company;
+        $("company").classList.remove("hidden");
+      }
+
+      $("followers").textContent = formatNumber(user.followers);
+      $("following").textContent = formatNumber(user.following);
+      $("publicRepos").textContent = formatNumber(user.public_repos);
+
+      setOptionalRow("rowBio", "bio", user.bio);
+      setOptionalRow("rowLocation", "location", user.location);
+      setOptionalRow("rowBlog", "blog", user.blog, true);
+      setOptionalRow("rowEmail", "email", user.email);
+
+      $("accountType").textContent =
+        user.type + (user.site_admin ? " (مدیر سایت)" : "");
+      $("createdAt").textContent = formatDate(user.created_at);
+      $("updatedAt").textContent = formatDate(user.updated_at);
+      $("publicGists").textContent = formatNumber(user.public_gists);
+
+      $("githubLink").href = user.html_url;
+    }
+
+    function showError(message) {
+      $("loading").classList.add("hidden");
+      const err = $("error");
+      err.textContent = message;
+      err.classList.remove("hidden");
+    }
+
+    async function loadProfile() {
+      try {
+        const res = await fetch(API_URL);
+        if (!res.ok) {
+          throw new Error("خطا در دریافت داده (کد " + res.status + ")");
+        }
+        const user = await res.json();
+        showProfile(user);
+      } catch (e) {
+        showError(
+          e.message ||
+            "امکان اتصال به API وجود ندارد. فایل را از طریق یک سرور محلی باز کنید."
+        );
+      }
+    }
+
+    loadProfile();
+  </script>
+</body>
+</html>
